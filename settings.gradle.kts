@@ -215,3 +215,8 @@ include(":system-tests:telemetry:telemetry-test-runner")
 include(":system-tests:telemetry:telemetry-test-runtime")
 
 include(":version-catalog")
+
+//include("launchers:dih-connector")
+//findProject(":launchers:dih-connector")?.name = "dih-connector"dih-connector
+include("extensions:data-plane:data-plane-opcua")
+findProject(":extensions:data-plane:data-plane-opcua")?.name = "data-plane-opcua"
