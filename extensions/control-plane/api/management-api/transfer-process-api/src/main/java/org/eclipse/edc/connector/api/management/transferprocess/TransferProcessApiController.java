@@ -118,17 +118,12 @@ public class TransferProcessApiController implements TransferProcessApi {
                 .orElseThrow(() -> new ObjectNotFoundException(TransferProcess.class, id));
     }
 
-    @GET
-    @Path("initiateTransferProcess/{id}")
+    @POST
     @Override
-    public JsonObject initiateTransferProcess(@PathParam("id") String id) {
-        var transferProcess = getTransferProcess(id);
+    public JsonObject initiateTransferProcess(JsonObject request) {
+        validatorRegistry.validate(TRANSFER_REQUEST_TYPE, request).orElseThrow(ValidationFailureException::new);
 
-        return validatedTransferProcess(transferProcess);
-    }
-
-    private JsonObject validatedTransferProcess(JsonObject jsonObject) {
-        var transferRequest = transformerRegistry.transform(jsonObject, TransferRequest.class)
+        var transferRequest = transformerRegistry.transform(request, TransferRequest.class)
                 .orElseThrow(InvalidRequestException::new);
 
         var createdTransfer = service.initiateTransfer(transferRequest)
@@ -142,14 +137,6 @@ public class TransferProcessApiController implements TransferProcessApi {
 
         return transformerRegistry.transform(responseDto, JsonObject.class)
                 .orElseThrow(f -> new EdcException("Error creating response body: " + f.getFailureDetail()));
-    }
-
-    @POST
-    @Override
-    public JsonObject initiateTransferProcess(JsonObject request) {
-        validatorRegistry.validate(TRANSFER_REQUEST_TYPE, request).orElseThrow(ValidationFailureException::new);
-
-        return validatedTransferProcess(request);
     }
 
     @POST

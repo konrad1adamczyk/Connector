@@ -93,21 +93,6 @@ public interface TransferProcessApi {
             })
     JsonObject initiateTransferProcess(JsonObject transferRequest);
 
-    @Operation(description = "Initiates a data transfer with the given parameters. Please note that successfully invoking this endpoint " +
-            "only means that the transfer was initiated. Clients must poll the /{id}/state endpoint to track the state",
-            requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = TransferRequestSchema.class))),
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "The transfer was successfully initiated. Returns the transfer process ID and created timestamp",
-                            content = @Content(schema = @Schema(implementation = ApiCoreSchema.IdResponseSchema.class)),
-                            links = @Link(name = "poll-state", operationId = "getTransferProcessState", parameters = {
-                                    @LinkParameter(name = "id", expression = "$response.body#/id")
-                            })
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Request body was malformed",
-                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ApiErrorDetail.class)))),
-            })
-    JsonObject initiateTransferProcess(String id);
-
     @Operation(description = "Requests the deprovisioning of resources associated with a transfer process. Due to the asynchronous nature of transfers, a successful " +
             "response only indicates that the request was successfully received. This may take a long time, so clients must poll the /{id}/state endpoint to track the state.",
             responses = {
